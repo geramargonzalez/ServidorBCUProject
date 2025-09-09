@@ -1,0 +1,62 @@
+{
+  "ejemplos": {
+    "cotizacion": {
+      "descripcion": "Consulta cotización de una moneda en fecha específica",
+      "request": {
+        "tipoConsulta": "cotizacion",
+        "parametros": {
+          "moneda": "USD",
+          "fecha": "2024-03-15"
+        }
+      },
+      "curl_example": "curl -k -X POST https://localhost:8443/api/bcu/consulta -H 'Content-Type: application/json' -d '{\"tipoConsulta\":\"cotizacion\",\"parametros\":{\"moneda\":\"USD\",\"fecha\":\"2024-03-15\"}}'"
+    },
+    
+    "arbitraje": {
+      "descripcion": "Consulta arbitraje entre dos monedas",
+      "request": {
+        "tipoConsulta": "arbitraje",
+        "parametros": {
+          "monedaOrigen": "USD",
+          "monedaDestino": "EUR",
+          "fecha": "2024-03-15"
+        }
+      },
+      "curl_example": "curl -k -X POST https://localhost:8443/api/bcu/consulta -H 'Content-Type: application/json' -d '{\"tipoConsulta\":\"arbitraje\",\"parametros\":{\"monedaOrigen\":\"USD\",\"monedaDestino\":\"EUR\",\"fecha\":\"2024-03-15\"}}'"
+    },
+    
+    "historico": {
+      "descripcion": "Consulta serie histórica de una moneda",
+      "request": {
+        "tipoConsulta": "historico",
+        "parametros": {
+          "moneda": "USD",
+          "fechaInicio": "2024-03-01",
+          "fechaFin": "2024-03-15"
+        }
+      },
+      "curl_example": "curl -k -X POST https://localhost:8443/api/bcu/consulta -H 'Content-Type: application/json' -d '{\"tipoConsulta\":\"historico\",\"parametros\":{\"moneda\":\"USD\",\"fechaInicio\":\"2024-03-01\",\"fechaFin\":\"2024-03-15\"}}'"
+    }
+  },
+  
+  "respuesta_ejemplo": {
+    "status": "success",
+    "tipoConsulta": "cotizacion",
+    "datos": {
+      "moneda": "USD",
+      "fecha": "2024-03-15",
+      "compra": 42.50,
+      "venta": 44.20,
+      "fechaConsulta": "2024-03-15 10:30:00"
+    },
+    "metadatos": {
+      "fuente": "BCU",
+      "procesadoEn": 1710505800000,
+      "version": "1.0"
+    }
+  },
+  
+  "health_check": {
+    "curl_example": "curl -k https://localhost:8443/api/health"
+  }
+}

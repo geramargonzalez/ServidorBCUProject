@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API BCU Gateway</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        h2 {
+            color: #555;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .url-info {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏦 Test API BCU Gateway</h1>
+    
+    <div class="url-info">
+        <strong>Servidor HTTP:</strong> http://localhost:8080 (para desarrollo)<br>
+        <strong>Servidor HTTPS:</strong> https://localhost:8443 (producción)<br>
+        <strong>Health Check:</strong> <a href="http://localhost:8080/api/health" target="_blank">http://localhost:8080/api/health</a><br>
+        <strong>API Endpoint:</strong> http://localhost:8080/api/bcu/consulta
+    </div>
+
+    <!-- Health Check -->
+    <div class="container">
+        <h2>🏥 Health Check</h2>
+        <button onclick="healthCheck()">Verificar Estado del Servidor</button>
+        <div id="healthResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <!-- Consulta Cotización -->
+    <div class="container">
+        <h2>💱 Consulta Cotización</h2>
+        <div class="form-group">
+            <label for="cotizacionMoneda">Moneda:</label>
+            <select id="cotizacionMoneda">
+                <option value="USD">USD - Dólar Estadounidense</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="ARS">ARS - Peso Argentino</option>
+                <option value="BRL">BRL - Real Brasileño</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="cotizacionFecha">Fecha:</label>
+            <input type="date" id="cotizacionFecha" value="2025-09-05">
+        </div>
+        <button onclick="consultarCotizacion()">Consultar Cotización</button>
+        <div id="cotizacionResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <!-- Consulta Arbitraje -->
+    <div class="container">
+        <h2>🔄 Consulta Arbitraje</h2>
+        <div class="form-group">
+            <label for="arbitrajeMonedaOrigen">Moneda Origen:</label>
+            <select id="arbitrajeMonedaOrigen">
+                <option value="USD">USD - Dólar Estadounidense</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="ARS">ARS - Peso Argentino</option>
+                <option value="BRL">BRL - Real Brasileño</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="arbitrajeMonedaDestino">Moneda Destino:</label>
+            <select id="arbitrajeMonedaDestino">
+                <option value="EUR">EUR - Euro</option>
+                <option value="USD">USD - Dólar Estadounidense</option>
+                <option value="ARS">ARS - Peso Argentino</option>
+                <option value="BRL">BRL - Real Brasileño</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="arbitrajeFecha">Fecha:</label>
+            <input type="date" id="arbitrajeFecha" value="2025-09-05">
+        </div>
+        <button onclick="consultarArbitraje()">Consultar Arbitraje</button>
+        <div id="arbitrajeResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <!-- Consulta Histórico -->
+    <div class="container">
+        <h2>📊 Consulta Histórico</h2>
+        <div class="form-group">
+            <label for="historicoMoneda">Moneda:</label>
+            <select id="historicoMoneda">
+                <option value="USD">USD - Dólar Estadounidense</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="ARS">ARS - Peso Argentino</option>
+                <option value="BRL">BRL - Real Brasileño</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="historicoFechaInicio">Fecha Inicio:</label>
+            <input type="date" id="historicoFechaInicio" value="2025-09-01">
+        </div>
+        <div class="form-group">
+            <label for="historicoFechaFin">Fecha Fin:</label>
+            <input type="date" id="historicoFechaFin" value="2025-09-05">
+        </div>
+        <button onclick="consultarHistorico()">Consultar Histórico</button>
+        <div id="historicoResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+
+        function showResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `response ${isError ? 'error' : 'success'}`;
+            element.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        }
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                
+                const data = await response.text();
+                try {
+                    return { data: JSON.parse(data), status: response.status, ok: response.ok };
+                } catch {
+                    return { data, status: response.status, ok: response.ok };
+                }
+            } catch (error) {
+                return { error: error.message, status: 0, ok: false };
+            }
+        }
+
+        async function healthCheck() {
+            const result = await makeRequest(`${API_BASE}/api/health`);
+            
+            if (result.error) {
+                showResponse('healthResponse', `Error: ${result.error}`, true);
+            } else if (!result.ok) {
+                showResponse('healthResponse', `HTTP ${result.status}: ${result.data}`, true);
+            } else {
+                showResponse('healthResponse', result.data);
+            }
+        }
+
+        async function consultarCotizacion() {
+            const moneda = document.getElementById('cotizacionMoneda').value;
+            const fecha = document.getElementById('cotizacionFecha').value;
+            
+            const requestBody = {
+                tipoConsulta: 'cotizacion',
+                parametros: {
+                    moneda: moneda,
+                    fecha: fecha
+                }
+            };
+
+            const result = await makeRequest(`${API_BASE}/api/bcu/consulta`, {
+                method: 'POST',
+                body: JSON.stringify(requestBody)
+            });
+
+            console.log(result);
+
+            if (result.error) {
+                showResponse('cotizacionResponse', `Error: ${result.error}`, true);
+            } else if (!result.ok) {
+                showResponse('cotizacionResponse', `HTTP ${result.status}: ${result.data}`, true);
+            } else {
+                showResponse('cotizacionResponse', result.data);
+            }
+        }
+
+        async function consultarArbitraje() {
+            const monedaOrigen = document.getElementById('arbitrajeMonedaOrigen').value;
+            const monedaDestino = document.getElementById('arbitrajeMonedaDestino').value;
+            const fecha = document.getElementById('arbitrajeFecha').value;
+            
+            const requestBody = {
+                tipoConsulta: 'arbitraje',
+                parametros: {
+                    monedaOrigen: monedaOrigen,
+                    monedaDestino: monedaDestino,
+                    fecha: fecha
+                }
+            };
+
+            const result = await makeRequest(`${API_BASE}/api/bcu/consulta`, {
+                method: 'POST',
+                body: JSON.stringify(requestBody)
+            });
+
+            if (result.error) {
+                showResponse('arbitrajeResponse', `Error: ${result.error}`, true);
+            } else if (!result.ok) {
+                showResponse('arbitrajeResponse', `HTTP ${result.status}: ${result.data}`, true);
+            } else {
+                showResponse('arbitrajeResponse', result.data);
+            }
+        }
+
+        async function consultarHistorico() {
+            const moneda = document.getElementById('historicoMoneda').value;
+            const fechaInicio = document.getElementById('historicoFechaInicio').value;
+            const fechaFin = document.getElementById('historicoFechaFin').value;
+            
+            const requestBody = {
+                tipoConsulta: 'historico',
+                parametros: {
+                    moneda: moneda,
+                    fechaInicio: fechaInicio,
+                    fechaFin: fechaFin
+                }
+            };
+
+            const result = await makeRequest(`${API_BASE}/api/bcu/consulta`, {
+                method: 'POST',
+                body: JSON.stringify(requestBody)
+            });
+
+            if (result.error) {
+                showResponse('historicoResponse', `Error: ${result.error}`, true);
+            } else if (!result.ok) {
+                showResponse('historicoResponse', `HTTP ${result.status}: ${result.data}`, true);
+            } else {
+                showResponse('historicoResponse', result.data);
+            }
+        }
+
+        // Auto-configurar fecha actual
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('cotizacionFecha').value = today;
+        document.getElementById('arbitrajeFecha').value = today;
+        document.getElementById('historicoFechaFin').value = today;
+        
+        // Fecha de inicio hace una semana
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        document.getElementById('historicoFechaInicio').value = weekAgo.toISOString().split('T')[0];
+    </script>
+</body>
+</html>

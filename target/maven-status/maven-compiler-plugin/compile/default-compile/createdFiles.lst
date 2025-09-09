@@ -1,0 +1,7 @@
+com\enlamano\server\AxisServerMain.class
+com\enlamano\server\HealthCheckServlet.class
+com\enlamano\server\BcuSoapClient$1.class
+com\enlamano\server\BcuSoapClient.class
+com\enlamano\server\BcuGatewayServlet.class
+com\enlamano\server\BcuSoapClient$2.class
+com\enlamano\server\BcuSoapResponse.class
